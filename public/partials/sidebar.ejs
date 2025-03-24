@@ -1,0 +1,47 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.querySelector(".sidebar-toggle");
+        const body = document.body;
+
+        toggleButton.addEventListener("click", function () {
+            body.classList.toggle("sidebar-collapsed");
+        });
+    });
+</script>
+
+<aside class="main-sidebar">
+
+    <div class="sidebar-divider"></div>
+
+    <div class="user-panel">
+        <div class="pull-left image">
+            <img src="backend/profile_user/boy.jpeg" alt="User Image">
+            <span class="status-indicator"></span>
+        </div>
+        <div class="pull-left info">
+                <img src="/backend/profile_user/boy.jpeg" class="user-image" alt="User Image">
+                <h5 class="hidden-xs"><%= user.nama %></h5>
+            
+            <p class="user-role">Network Administrator</p>
+        </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-heading">Main Navigation</div>
+
+    <ul class="sidebar-menu">
+        <li class="nav-item active" style="margin-top: 10px;">
+            <a href="?page=home" class="nav-link d-flex align-items-center">
+                <i class="fas fa-tachometer-alt " style="margin-right: 10px;"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+    </ul>
+
+
+</aside>

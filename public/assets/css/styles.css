@@ -1,0 +1,371 @@
+.export-button {
+    float: right;
+    margin-top: 12px;
+  }
+
+  .import-button {
+    float: right;
+    margin-top: 12px;
+  }
+
+  /* CSS untuk tombol kontrol */
+  .map-control-button {
+    background-color: white;
+    border: 2px solid #008CBA;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .map-control-button:hover {
+    background-color: #008CBA;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .map-control-button:active {
+    transform: scale(1);
+  }
+
+  /* Posisi kontrol tombol di sebelah kiri */
+  .map-control-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .finish-button-container {
+    margin-left: 10px;
+  }
+
+  /* CSS untuk tombol Finish Polyline */
+  #finishButton {
+    background-color: white;
+    border: 2px solid #FF0000;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  #finishButton:hover {
+    background-color: #FF0000;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  #finishButton:active {
+    transform: scale(1);
+  }
+
+  /* CSS untuk tombol delete Polyline */
+  #deleteButton {
+    background-color: white;
+    border: 2px solid #FF0000;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  #deleteButton:hover {
+    background-color: #FF0000;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  #deleteButton:active {
+    transform: scale(1);
+  }
+
+  /* CSS untuk tombol aktif setelah diklik */
+  .map-control-button.active,
+  .map-control-button:active {
+    background-color: #008CBA;
+    color: white;
+  }
+
+  /* Hover efek tetap ketika tombol aktif */
+  .map-control-button:hover.active {
+    background-color: #005f8c;
+    color: white;
+  }
+
+  .swal-large {
+    font-size: 15px !important;
+    width: 500px !important;
+    height: 350px !important;
+    border-radius: 15px !important;
+  }
+
+  .swal-title-large {
+    font-size: 24px !important;
+    font-weight: bold !important;
+  }
+
+  .swal-content-large {
+    font-size: 26px !important;
+  }
+
+  .swal-button-large {
+    font-size: 17px !important;
+    width: 90px !important;
+  }
+  .content-header{
+    margin-left: 250px; 
+    padding: 20px; 
+    margin-top: 60px;
+  } 
+
+ /* Menyesuaikan ukuran modal */
+.modal-dialog {
+  max-width: 600px !important; /* Atur ukuran maksimal modal */
+  margin-left: auto !important;
+  margin-top: 20px !important;
+  width: 100%;
+}
+
+/* Mengatur border-radius dan shadow modal */
+.modal-content {
+  border-radius: 12px !important; /* Membuat sudut modal lebih membulat */
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+.modal-title{
+  color:black;
+  font-weight: bold !important; 
+}
+/* Mengatur header modal */
+.modal-header {
+  border-radius: 18px !important;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+  font-weight: bold !important;
+  padding: 15px;
+}
+
+/* Mengatur footer modal */
+.modal-footer {
+  border-radius: 18px !important;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-color: #ffffff !important;
+  border: none !important;
+}
+
+/* Mengatur tampilan input dalam modal */
+.modal-body {
+  font-weight: bold !important;
+}
+.form-control {
+  border-radius: 8px;
+  font-size: 16px;
+  padding: 10px;
+  
+}
+
+/* Efek transisi saat modal muncul */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: scale(1.05);
+}
+
+
+  .btn1 {
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 8px 14px;
+    border: none;
+  }
+
+  .btn-primaryy {
+    background-color: #6c5ce7 !important;
+    color: white !important;
+  }
+  .btn-primaryy:hover{
+    background-color: #4b3ace !important;
+    color: white !important;
+  }
+
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: #f8f9fa;
+    border: none;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+
+  .header-container {
+    background: linear-gradient(to right, #6c5ce7, #a594f9);
+    padding: 15px 20px;
+    border-radius: 16px;
+    margin: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .header-title {
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-main {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-sub {
+    font-size: 14px;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .btn {
+    height: 36px;
+    border-radius: 12px;
+    font-size: 14px;
+    padding: 0 16px;
+  }
+
+  .btn i {
+    font-size: 16px;
+  }
+
+  .file-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #fileInput {
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+  }
+
+  #fileInput::-webkit-file-upload-button {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* Save project button styling */
+
+  @media (max-width: 768px) {
+    .header-title {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .header-actions {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .file-input-container {
+      width: 100%;
+    }
+
+    #fileInput {
+      width: 100%;
+    }
+  }
+
+  /* Gaya untuk ikon dalam tombol kontrol */
+  .map-control-button  {
+    background-color: white !important;
+    border: 2px solid #008CBA !important; 
+    padding: 10px!important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    border-radius: 5px !important;
+    margin: 5px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .map-control-button:hover {
+    background-color: #008CBA !important;
+    color: white !important;
+    transform: scale(1.1) !important;
+  }
+
+  .map-control-button:active {
+    transform: scale(1) !important;
+  }
+
+  /* Posisi kontrol tombol di sebelah kiri */
+  .map-control-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .finish-button-container {
+    margin-left: 10px;
+  }
+
+  .navbar {
+    position: fixed !important;
+    margin-bottom: 100px !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 1000;
+    background: linear-gradient(125deg, #1a2234 0%, #242e48 100%);
+}
+  h5{
+    color :white ;
+  }
+  .btn{
+    border-radius: 9px !important;
+    color: white !important;
+  }
