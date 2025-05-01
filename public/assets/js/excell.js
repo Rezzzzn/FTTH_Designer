@@ -1,40 +1,66 @@
-function exportToExcel() {
+function sendToExcel() {
     console.log("Export Excel diklik!");
 
-    // Ambil data dari localStorage
     let boqData = localStorage.getItem("boqData");
 
     if (!boqData) {
-        alert("Tidak ada data yang ditemukan!");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tidak ada data!',
+            text: 'Tidak ada data yang ditemukan!'
+        });
         return;
     }
 
     let data = JSON.parse(boqData);
     console.log("Data BOQ:", data);
 
-    // Ambil start dan end sebagai marker
-    let markers = [
-        { Name: "Start", Latitude: data.start.lat, Longitude: data.start.lng, Description: "Titik awal" },
-        { Name: "End", Latitude: data.end.lat, Longitude: data.end.lng, Description: "Titik akhir" }
-    ];
+    if (!data.segments || data.segments.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tidak ada segment!',
+            text: 'Data segment kosong!'
+        });
+        return;
+    }
 
-    console.log("Markers:", markers);
+    let csvContent = "";
 
-    // Konversi ke format array untuk SheetJS
-    let excelData = [
-        ["Name", "Latitude", "Longitude", "Description"], // Header
-        ...markers.map(m => [m.Name, m.Latitude, m.Longitude, m.Description])
-    ];
+    data.segments.forEach((segment, index) => {
+        const segmentLabel = `Segment ${String.fromCharCode(65 + index)}`; // A, B, C...
 
-    // Buat workbook dan worksheet
-    let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.aoa_to_sheet(excelData);
+        // Markers
+        csvContent += `${segmentLabel} - Markers:\n`;
+        csvContent += "No, Latitude, Longitude\n";
+        if (Array.isArray(segment.markers)) {
+            segment.markers.forEach(([lat, lng], i) => {
+                csvContent += `${i + 1}, ${lat}, ${lng}\n`;
+            });
+        } else {
+            csvContent += "Tidak ada marker\n";
+        }
 
-    // Tambahkan worksheet ke workbook
-    XLSX.utils.book_append_sheet(wb, ws, "Map Data");
+        // Polyline
+        csvContent += `\n${segmentLabel} - Polyline:\n`;
+        csvContent += "No, Latitude, Longitude\n";
+        if (Array.isArray(segment.polyline)) {
+            segment.polyline.forEach(([lat, lng], j) => {
+                csvContent += `${j + 1}, ${lat}, ${lng}\n`;
+            });
+        } else {
+            csvContent += "Tidak ada polyline\n";
+        }
 
-    // Simpan file Excel
-    XLSX.writeFile(wb, "map_export.xlsx");
+        csvContent += "\n";
+    });
 
-    console.log("Export berhasil!");
+    let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${data.projectName || 'map_export'}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    console.log("Export Excel berhasil!");
 }

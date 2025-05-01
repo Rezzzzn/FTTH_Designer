@@ -273,7 +273,7 @@
     gap: 8px;
   }
 
-  #fileInput {
+  #kmlFile {
     padding: 6px 10px;
     border-radius: 12px;
     font-size: 14px;
@@ -282,7 +282,7 @@
     color: white;
   }
 
-  #fileInput::-webkit-file-upload-button {
+  #kmlFile::-webkit-file-upload-button {
     padding: 6px 12px;
     border-radius: 10px;
     font-size: 14px;
@@ -309,7 +309,7 @@
       width: 100%;
     }
 
-    #fileInput {
+    #kmlFile {
       width: 100%;
     }
   }

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill of Quantities (BOQ) - Fiber Network</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+      .header-container {
+        background: linear-gradient(to right, #6c5ce7, #a594f9);
+        padding: 15px 20px;
+        border-radius: 16px;
+        margin: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      }
+
+      .header-title {
+        color: white;
+        font-family: 'Outfit', sans-serif;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header-main {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .header-sub {
+        font-size: 14px;
+        font-weight: 300;
+        opacity: 0.9;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .btn {
+        height: 36px;
+        border-radius: 12px;
+        font-size: 14px;
+        padding: 0 16px;
+        width: 13rem;
+      }
+
+      .btn i {
+        font-size: 16px;
+      }
+
+      /* BOQ Table styles */
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .card-header {
+        background: linear-gradient(to right, #6c5ce7, #a594f9);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+        padding: 15px 20px;
+      }
+
+      .card-title {
+        margin-bottom: 0;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .table {
+        margin-bottom: 0;
+      }
+
+      .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+      }
+
+      .table th, .table td {
+        padding: 12px 15px;
+        vertical-align: middle;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: rgba(108, 92, 231, 0.05);
+      }
+
+      /* Summary card */
+      .summary-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .summary-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #6c5ce7;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .summary-label {
+        font-weight: 500;
+      }
+
+      .summary-value {
+    display: inline; /* Pastikan tidak display: none */
+    visibility: visible !important; /* Jangan visibility: hidden */
+    color: black; /* Pastikan warna bukan putih di background putih */
+}
+
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .action-buttons .btn {
+        flex: 1;
+      }
+
+      @media (max-width: 768px) {
+        .header-title {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .header-actions {
+          flex-wrap: wrap;
+          justify-content: center;
+          width: 100%;
+        }
+        
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <section class="content-header">
+            <div class="header-container">
+                <div class="header-title">
+                    <div class="header-text">
+                        <span class="header-main">Bill of Quantities (BOQ)</span>
+                        <span class="header-sub" id="projectNameDisplay">Project: Loading...</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-light" onclick="backToMap()">
+                            <i class="fa fa-arrow-left"></i>
+                            Back to Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <!-- Main BOQ Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Material Requirements</h3>
+                        </div>
+                        <div class="card-body">
+                           <!-- Ini buat nampung semua tabel segment -->
+                              <div id="tablesContainer"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Project Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Project Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-card">
+                                <div class="summary-title">Network Details</div>
+                                <div class="summary-item">
+                                  <div id="segmentDistances"></div>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Network Type:</span>
+                                    <span class="summary-value">Fiber Optic</span>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="sendToExcel()">
+                                    <i class="fa fa-file-excel" style="margin-right: 3px;"></i> Export to Excel
+                                </button>
+                                <button class="btn btn-info" onclick="sendToKML()">
+                                    <i class="fa fa-map "  style="margin-right: 3px;"></i> Export to KML
+                                </button>
+                            </div>
+
+                            <!-- <div class="summary-card">
+                                <div class="summary-title">Notes</div>
+                                <textarea class="form-control" rows="4" placeholder="Add project notes here..."></textarea>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+   <script>document.addEventListener("DOMContentLoaded", () => {
+    // Your code to manipulate elements here
+});
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/boq.js"></script>
+    <script src="/assets/js/back.js"></script>
+    <script src="/assets/js/excell.js"></script>
+    <script src="/assets/js/kml.js"></script>
+    <script src="/assets/js/projects.js"></script>
+</body>
+</html>

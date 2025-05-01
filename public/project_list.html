@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects List - Project Map</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .content-header {
+            margin-left: 250px; 
+            padding: 20px; 
+            margin-top: 60px;
+        }
+        
+        .projects-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .projects-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .projects-table thead th {
+            background: linear-gradient(to right, #6c5ce7, #a594f9);
+            color: white;
+            padding: 12px 15px;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+        
+        .projects-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .projects-table tbody tr:nth-child(odd) {
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+        
+        .projects-table tbody tr:hover {
+            background-color: rgba(108, 92, 231, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .projects-table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+        }
+        
+        .view-btn {
+            background-color: #6c5ce7;
+        }
+        
+        .view-btn:hover {
+            background-color: #5649c0;
+        }
+        
+        .details-btn {
+            background-color: #2ecc71;
+        }
+        
+        .details-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Status styles kept for modal use only */
+        .project-status {
+            padding: 4px 8px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+        
+        .status-completed {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-ongoing {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #2980b9;
+        }
+        
+        .status-planned {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: #d35400;
+        }
+        
+        .project-date {
+            font-size: 13px;
+            color: #777;
+        }
+        
+        .no-projects-message {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.25);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .add-project-btn {
+            background: linear-gradient(to right, #6c5ce7, #a594f9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+        
+        .add-project-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+        }
+        
+        .add-project-btn:active {
+            transform: translateY(0);
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .pagination {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 5px;
+        }
+        
+        .pagination li a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination li.active a {
+            background-color: #6c5ce7;
+            color: white;
+        }
+        
+        .pagination li a:hover:not(.active) {
+            background-color: #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .content-header {
+                margin-left: 0;
+                padding: 15px;
+                margin-top: 70px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .action-btn {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+            
+            .project-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark bg-dark p-3">
+        <div class="ml-auto">
+            <a class="text-light mx-2" title="Menuju Halaman Home" href="?page=home"><i class="fas fa-home"></i></a>
+            <a class="text-light mx-2" title="Menuju Halaman User" href="edit_profile.html"><i class="fas fa-user"></i></a>
+        </div>
+    </header>
+
+    <aside class="main-sidebar">
+        <a class="navbar-brand" href="?page=home" style="margin-left:4rem; color: white; margin-top: 1rem;">Project Map</a>
+        <div class="sidebar-divider"></div>
+        
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="assets/image/Pateer.jpg" alt="User Image">
+                <span class="status-indicator"></span>
+            </div>
+            <div class="pull-left info">
+                <h5 class="hidden-xs">admin</h5>
+                <p class="user-role">Network Administrator</p>
+            </div>
+        </div>
+    
+        <div class="sidebar-divider"></div>
+    
+        <div class="sidebar-heading">Main Navigation</div>
+    
+        <ul class="sidebar-menu">
+            <li class="nav-item " style="margin-top: 10px;">
+                <a href="?page=home" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-tachometer-alt " style="margin-right: 10px;"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item active">
+                <a href="projects.html" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-project-diagram" style="margin-right: 10px;"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <section class="content-header">
+        <div class="header-container">
+            <div class="header-title">
+                <div class="header-text">
+                    <span class="header-main">Projects</span>
+                    <span class="header-sub">Manage Your Projects</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="projects-table-container">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchProject" placeholder="Search projects...">
+                </div>
+                
+                <!-- <button class="add-project-btn" onclick="window.location.href='?page=home'">
+                    <i class="fas fa-plus"></i>
+                    New Project
+                </button> -->
+            </div>
+            
+            <div class="table-responsive">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Project Name</th>
+                            <th>Created Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody">
+                        <!-- Projects will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination-container">
+                <ul class="pagination">
+                    <li><a href="#"><i class="fas fa-angle-left"></i></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Project Details Modal -->
+    <div class="modal fade" id="projectDetailsModal" tabindex="-1" role="dialog" aria-labelledby="projectDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectDetailsModalLabel">Detail Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="projectDetailsContent">
+                    <!-- Project details will be loaded here dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal for Delete -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Konfirmasi Hapus</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus project ini?</p>
+                    <p class="text-danger"><small>Tindakan ini tidak dapat dibatalkan.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample project data - In production, this would be loaded from a database or localStorage
+        let projects = [
+            {
+                id: 'proj_001',
+                name: 'Network Expansion East Jakarta',
+                createdAt: new Date('2025-03-15').getTime(),
+                status: 'completed',
+                mapData: {
+                    markers: [
+                        { lat: -6.2088, lng: 106.8456 },
+                        { lat: -6.2102, lng: 106.8498 },
+                        { lat: -6.2145, lng: 106.8512 }
+                    ],
+                    polylines: [
+                        { path: [{ lat: -6.2088, lng: 106.8456 }, { lat: -6.2102, lng: 106.8498 }] },
+                        { path: [{ lat: -6.2102, lng: 106.8498 }, { lat: -6.2145, lng: 106.8512 }] }
+                    ],
+                    totalDistance: 1250,
+                    totalArea: 8500
+                }
+            },
+            {
+                id: 'proj_002',
+                name: 'Fiber Optic Installation West Jakarta',
+                createdAt: new Date('2025-04-02').getTime(),
+                status: 'ongoing',
+                mapData: {
+                    markers: [
+                        { lat: -6.1751, lng: 106.7665 },
+                        { lat: -6.1778, lng: 106.7701 }
+                    ],
+                    polylines: [
+                        { path: [{ lat: -6.1751, lng: 106.7665 }, { lat: -6.1778, lng: 106.7701 }] }
+                    ],
+                    totalDistance: 850,
+                    totalArea: 4200
+                }
+            },
+            {
+                id: 'proj_003',
+                name: 'Network Maintenance South Jakarta',
+                createdAt: new Date('2025-04-05').getTime(),
+                status: 'planned',
+                mapData: {
+                    markers: [
+                        { lat: -6.2601, lng: 106.7792 },
+                        { lat: -6.2632, lng: 106.7812 },
+                        { lat: -6.2678, lng: 106.7834 }
+                    ],
+                    polylines: [
+                        { path: [{ lat: -6.2601, lng: 106.7792 }, { lat: -6.2632, lng: 106.7812 }] },
+                        { path: [{ lat: -6.2632, lng: 106.7812 }, { lat: -6.2678, lng: 106.7834 }] }
+                    ],
+                    totalDistance: 1050,
+                    totalArea: 6800
+                }
+            },
+            {
+                id: 'proj_004',
+                name: 'Tower Installation North Jakarta',
+                createdAt: new Date('2025-04-10').getTime(),
+                status: 'ongoing',
+                mapData: {
+                    markers: [
+                        { lat: -6.1385, lng: 106.8317 },
+                        { lat: -6.1402, lng: 106.8345 }
+                    ],
+                    polylines: [
+                        { path: [{ lat: -6.1385, lng: 106.8317 }, { lat: -6.1402, lng: 106.8345 }] }
+                    ],
+                    totalDistance: 650,
+                    totalArea: 3200
+                }
+            }
+        ];
+
+        // Function to load projects into the table
+        function loadProjects() {
+            const tableBody = document.getElementById('projectsTableBody');
+            
+            if (projects.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="no-projects-message">No projects found</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            projects.forEach((project, index) => {
+                const date = new Date(project.createdAt);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                html += `
+                    <tr data-project-id="${project.id}">
+                        <td>${index + 1}</td>
+                        <td>${project.name}</td>
+                        <td class="project-date">${formattedDate}</td>
+                        <td>
+                            <div class="project-actions">
+                                <button class="action-btn view-btn" onclick="viewProjectMap('${project.id}')">
+                                    <i class="fas fa-map-marked-alt"></i> View Map
+                                </button>
+                                <button class="action-btn details-btn" onclick="viewProjectDetails('${project.id}')">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                                <button class="action-btn delete-btn" onclick="confirmDeleteProject('${project.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        // Function to view project map
+        function viewProjectMap(projectId) {
+            // Redirect to map page with project ID
+            window.location.href = `?page=home&projectId=${projectId}`;
+        }
+
+        // Function to view project details
+        function viewProjectDetails(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            // Generate project details HTML
+            let detailsHtml = `
+                <div class="project-details">
+                    <h4>${project.name}</h4>
+                    <p><strong>Created:</strong> ${formatDate(project.createdAt)}</p>
+                    <p><strong>Status:</strong> <span class="project-status status-${project.status}">${project.status.charAt(0).toUpperCase() + project.status.slice(1)}</span></p>
+                    
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5>Project Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Total Markers:</strong> ${project.mapData?.markers?.length || 0}</p>
+                                    <p><strong>Total Lines:</strong> ${project.mapData?.polylines?.length || 0}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Total Distance:</strong> ${formatDistance(project.mapData.totalDistance)}</p>
+                                    <p><strong>Area Coverage:</strong> ${formatArea(project.mapData.totalArea)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5>Materials Used</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Tiang</td>
+                                        <td>${project.mapData?.markers?.length || 0} buah</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kabel</td>
+                                        <td>${formatDistance(project.mapData.totalDistance)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add details to modal and show it
+            document.getElementById('projectDetailsContent').innerHTML = detailsHtml;
+            $('#projectDetailsModal').modal('show');
+        }
+
+        // Function to confirm delete project
+        function confirmDeleteProject(projectId) {
+            // Set the project ID to delete
+            document.getElementById('confirmDelete').setAttribute('data-project-id', projectId);
+            
+            // Show the confirmation modal
+            $('#deleteConfirmModal').modal('show');
+        }
+
+        // Function to delete project
+        function deleteProject(projectId) {
+            // Find the project index
+            const projectIndex = projects.findIndex(p => p.id === projectId);
+            
+            if (projectIndex !== -1) {
+                // Remove the project from the array
+                projects.splice(projectIndex, 1);
+                
+                // Update the UI
+                loadProjects();
+                
+                // Save to localStorage
+                localStorage.setItem('mapProjects', JSON.stringify(projects));
+                
+                // Show success message
+                alert('Project deleted successfully!');
+            }
+        }
+
+        // Format utilities
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        }
+
+        function formatDistance(meters) {
+            if (meters >= 1000) {
+                return (meters / 1000).toFixed(2) + " km";
+            }
+            return meters.toFixed(2) + " m";
+        }
+
+        function formatArea(squareMeters) {
+            if (squareMeters >= 10000) {
+                return (squareMeters / 10000).toFixed(2) + " ha";
+            }
+            return squareMeters.toFixed(2) + " m²";
+        }
+
+        // Search functionality
+        document.getElementById('searchProject').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            const filteredProjects = projects.filter(project => 
+                project.name.toLowerCase().includes(searchTerm)
+                // Removed status from search filter since it's no longer displayed
+            );
+            
+            projects = filteredProjects;
+            loadProjects();
+            projects = JSON.parse(localStorage.getItem('mapProjects')) || [];
+        });
+
+        // Set up event listener for delete confirmation
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            // Get the project ID from the data attribute
+            const projectId = this.getAttribute('data-project-id');
+            
+            // Delete the project
+            deleteProject(projectId);
+            
+            // Hide the modal
+            $('#deleteConfirmModal').modal('hide');
+        });
+
+        // Load projects from localStorage when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to load projects from localStorage
+            const storedProjects = localStorage.getItem('mapProjects');
+            
+            if (storedProjects) {
+                projects = JSON.parse(storedProjects);
+            }
+            
+            loadProjects();
+        });
+    </script>
+</body>
+</html>

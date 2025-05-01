@@ -1,0 +1,617 @@
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Projects List - Project Map</title>
+
+            <!-- Bootstrap CSS -->
+            <link rel="stylesheet" href="assets/css/styles.css">
+            <link rel="stylesheet" href="assets/css/sidebar.css">
+            <link rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+                rel="stylesheet">
+            <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+            <link rel="stylesheet"
+                href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+            }
+            
+            .content-header {
+                margin-left: 250px; 
+                padding: 20px; 
+                margin-top: 60px;
+            }
+            
+            .projects-table-container {
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                padding: 20px;
+                margin-top: 20px;
+            }
+            
+            .table-responsive {
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .projects-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+            
+            .projects-table thead th {
+                background: linear-gradient(to right, #6c5ce7, #a594f9);
+                color: white;
+                padding: 12px 15px;
+                font-weight: 500;
+                text-transform: uppercase;
+                font-size: 14px;
+                letter-spacing: 0.5px;
+                border: none;
+            }
+            
+            .projects-table tbody tr {
+                transition: all 0.3s ease;
+            }
+            
+            .projects-table tbody tr:nth-child(odd) {
+                background-color: rgba(108, 92, 231, 0.05);
+            }
+            
+            .projects-table tbody tr:hover {
+                background-color: rgba(108, 92, 231, 0.1);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            
+            .projects-table tbody td {
+                padding: 12px 15px;
+                vertical-align: middle;
+                border-top: 1px solid #e0e0e0;
+            }
+            
+            .project-actions {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            .action-btn {
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                color: white;
+            }
+            
+            .view-btn {
+                background-color: #6c5ce7;
+            }
+            
+            .view-btn:hover {
+                background-color: #5649c0;
+            }
+            
+            .details-btn {
+                background-color: #2ecc71;
+            }
+            
+            .details-btn:hover {
+                background-color: #27ae60;
+            }
+            
+            .delete-btn {
+                background-color: #e74c3c;
+            }
+            
+            .delete-btn:hover {
+                background-color: #c0392b;
+            }
+            
+            /* Status styles kept for modal use only */
+            .project-status {
+                padding: 4px 8px;
+                border-radius: 50px;
+                font-size: 12px;
+                font-weight: 500;
+                text-align: center;
+                display: inline-block;
+                min-width: 80px;
+            }
+            
+            .status-completed {
+                background-color: rgba(46, 204, 113, 0.2);
+                color: #27ae60;
+            }
+            
+            .status-ongoing {
+                background-color: rgba(52, 152, 219, 0.2);
+                color: #2980b9;
+            }
+            
+            .status-planned {
+                background-color: rgba(243, 156, 18, 0.2);
+                color: #d35400;
+            }
+            
+            .project-date {
+                font-size: 13px;
+                color: #777;
+            }
+            
+            .no-projects-message {
+                text-align: center;
+                padding: 40px;
+                font-size: 16px;
+                color: #777;
+                font-style: italic;
+            }
+            
+            .search-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            
+            .search-box {
+                position: relative;
+                width: 300px;
+            }
+            
+            .search-box input {
+                width: 100%;
+                padding: 10px 15px 10px 40px;
+                border-radius: 50px;
+                border: 1px solid #ddd;
+                outline: none;
+                transition: all 0.3s ease;
+            }
+            
+            .search-box input:focus {
+                border-color: #6c5ce7;
+                box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.25);
+            }
+            
+            .search-icon {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #777;
+            }
+            
+            .add-project-btn {
+                background: linear-gradient(to right, #6c5ce7, #a594f9);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 50px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            }
+            
+            .add-project-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+            }
+            
+            .add-project-btn:active {
+                transform: translateY(0);
+            }
+            
+            .pagination-container {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+            
+            .pagination {
+                display: flex;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                gap: 5px;
+            }
+            
+            .pagination li a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background-color: #f5f5f5;
+                color: #333;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+            
+            .pagination li.active a {
+                background-color: #6c5ce7;
+                color: white;
+            }
+            
+            .pagination li a:hover:not(.active) {
+                background-color: #e0e0e0;
+            }
+            
+            @media (max-width: 768px) {
+                .content-header {
+                    margin-left: 0;
+                    padding: 15px;
+                    margin-top: 70px;
+                }
+                
+                .search-container {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: stretch;
+                }
+                
+                .search-box {
+                    width: 100%;
+                }
+                
+                .action-btn {
+                    padding: 5px 8px;
+                    font-size: 12px;
+                }
+                
+                .project-actions {
+                    flex-direction: column;
+                    gap: 5px;
+                }
+            }
+        </style>
+        </head>
+        <body>
+            <header class="navbar navbar-dark bg-dark p-3">
+                <div class="ml-auto">
+                    <a class="text-light mx-2" title="Menuju Halaman Home"
+                        href="/home"><i class="fas fa-home"></i></a>
+                    <a class="text-light mx-2" title="Menuju Halaman User"
+                        href="/edit_profile"><i class="fas fa-user"></i></a>
+                    <a class="text-light mx-2" title="Logout" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </header>
+
+            <aside class="main-sidebar">
+                <a class="navbar-brand" href="/home"
+                    style="margin-left:4rem; color: white; margin-top: 1rem;">Project
+                    Map</a>
+                <div class="sidebar-divider"></div>
+
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="/uploads/<%= profilePicture %>" alt="User Profile Picture">
+                        <span class="status-indicator"></span>
+                    </div>
+                    <div class="pull-left info">
+                        <h5 class="hidden-xs"><%= name %></h5>
+        
+        
+                        
+                        <p class="user-role">Network Administrator</p>
+                    </div>
+                </div>
+                <div class="sidebar-divider"></div>
+
+                <div class="sidebar-heading">Main Navigation</div>
+
+                <ul class="sidebar-menu">
+                    <li class="nav-item " style="margin-top: 10px;">
+                        <a href="/home" class="nav-link d-flex align-items-center">
+                            <i class="fas fa-tachometer-alt "
+                                style="margin-right: 10px;"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a href="/project"
+                            class="nav-link d-flex align-items-center">
+                            <i class="fas fa-project-diagram"
+                                style="margin-right: 10px;"></i>
+                            <span>Projects</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <section class="content-header">
+                <div class="header-container">
+                    <div class="header-title">
+                        <div class="header-text">
+                            <span class="header-main">Projects</span>
+                            <span class="header-sub">Manage Your Projects</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="projects-table-container">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="searchProject"
+                                placeholder="Search projects...">
+                        </div>
+
+                        <!-- <button class="add-project-btn" onclick="window.location.href='?page=home'">
+                        <i class="fas fa-plus"></i>
+                        New Project
+                    </button> -->
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="projects-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Project Name</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <!-- Projects will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>  
+
+                    <div class="pagination-container">
+                        <ul class="pagination">
+                            <li><a href="#"><i
+                                class="fas fa-angle-left"></i></a></li>
+                                    <li class="active"><a href="#">1</a></li>
+                                    <li><a href="#">2</a></li>
+                                    <li><a href="#">3</a></li>
+                                    <li><a href="#"><i
+                                class="fas fa-angle-right"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project Details Modal -->
+            <div class="modal fade" id="projectDetailsModal" tabindex="-1"
+                role="dialog" aria-labelledby="projectDetailsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="projectDetailsModalLabel">Detail Project</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="projectDetailsContent">
+                            <!-- Project details will be loaded here dynamically -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Modal for Delete -->
+            <div class="modal fade" id="deleteConfirmModal" tabindex="-1"
+                role="dialog" aria-labelledby="deleteConfirmModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="deleteConfirmModalLabel">Konfirmasi Hapus</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Apakah Anda yakin ingin menghapus project ini?</p>
+                            <p class="text-danger"><small>Tindakan ini tidak dapat
+                                    dibatalkan.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Batal</button>
+                            <button type="button" class="btn btn-danger"
+                                id="confirmDelete">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script
+                src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+                <script>
+                   let projects = <%- JSON.stringify(projects || []) %>; // pakai let supaya bisa diubah saat search
+                    console.log("Projects:", projects);
+                    
+                    let currentPage = 1;
+                    const projectsPerPage = 5;
+                    
+                    function loadProjects() {
+                        const tableBody = document.getElementById('projectsTableBody');
+                        const paginationContainer = document.querySelector('.pagination');
+                    
+                        if (projects.length === 0) {
+                            tableBody.innerHTML = `<tr><td colspan="4" class="no-projects-message">No projects found</td></tr>`;
+                            paginationContainer.innerHTML = ''; // kosongkan pagination kalau tidak ada data
+                            return;
+                        }
+                    
+                        const startIndex = (currentPage - 1) * projectsPerPage;
+                        const endIndex = startIndex + projectsPerPage;
+                        const paginatedProjects = projects.slice(startIndex, endIndex);
+                    
+                        let html = '';
+                        paginatedProjects.forEach((project, index) => {
+                            const date = project.created_at ? new Date(project.created_at) : null;
+                            const formattedDate = date 
+                                ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                                : '-';
+                    
+                            html += `
+                                <tr>
+                                    <td>${startIndex + index + 1}</td>
+                                    <td>${project.name}</td>
+                                    <td>${formattedDate}</td>
+                                    <td style="text-align: left;">
+                                        <div style="display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                                            <button onclick="window.location.href='/project/${project.project_id}/details'" class="action-btn details-btn">
+                                                Details <i class="fas fa-info-circle" style="margin-left: 5px;"></i>
+                                            </button>
+                    
+                                            <button onclick="window.location.href='/project/${project.project_id}/view-map'" class="action-btn view-btn">
+                                                View Map <i class="fas fa-map-marked-alt" style="margin-left: 5px;"></i>
+                                            </button>
+                    
+                                            <button class="action-btn delete-btn" onclick="confirmDeleteProject('${project.project_id}')">Hapus</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    
+                        tableBody.innerHTML = html;
+                        setupPagination();
+                    }
+                    
+                    function setupPagination() {
+                        const paginationContainer = document.querySelector('.pagination');
+                        paginationContainer.innerHTML = ''; // bersihkan dulu
+                    
+                        const totalPages = Math.ceil(projects.length / projectsPerPage);
+                    
+                        // Tombol Previous
+                        paginationContainer.innerHTML += `
+                            <li class="${currentPage === 1 ? 'disabled' : ''}">
+                                <a href="javascript:void(0)" onclick="changePage(${currentPage - 1})"><i class="fas fa-angle-left"></i></a>
+                            </li>
+                        `;
+                    
+                        for (let i = 1; i <= totalPages; i++) {
+                            paginationContainer.innerHTML += `
+                                <li class="${currentPage === i ? 'active' : ''}">
+                                    <a href="javascript:void(0)" onclick="changePage(${i})">${i}</a>
+                                </li>
+                            `;
+                        }
+                    
+                        // Tombol Next
+                        paginationContainer.innerHTML += `
+                            <li class="${currentPage === totalPages ? 'disabled' : ''}">
+                                <a href="javascript:void(0)" onclick="changePage(${currentPage + 1})"><i class="fas fa-angle-right"></i></a>
+                            </li>
+                        `;
+                    }
+                    
+                    function changePage(page) {
+                        const totalPages = Math.ceil(projects.length / projectsPerPage);
+                    
+                        if (page < 1 || page > totalPages) return;
+                    
+                        currentPage = page;
+                        loadProjects();
+                    }
+                    
+                    document.addEventListener('DOMContentLoaded', function () {
+                        loadProjects();
+                    });
+                    
+                    function confirmDeleteProject(id) {
+                        Swal.fire({
+                            title: 'Apakah kamu yakin?',
+                            text: "Data project akan dihapus secara permanen!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Ya, hapus!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch(`/project/${id}`, {
+                                    method: 'DELETE'
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.message) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Berhasil',
+                                            text: data.message,
+                                            timer: 1500,
+                                            showConfirmButton: false
+                                        }).then(() => {
+                                            location.reload(); // reload halaman setelah berhasil
+                                        });
+                                    } else {
+                                        throw new Error(data.error || 'Gagal menghapus');
+                                    }
+                                })
+                                .catch(err => {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops!',
+                                        text: err.message || 'Terjadi kesalahan saat menghapus'
+                                    });
+                                });
+                            }
+                        });
+                    }
+                    const searchInput = document.getElementById('searchProject');
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim();
+
+        // Kalau kosong, reset ke semua data awal (dari EJS)
+        if (query === "") {
+            projects = <%- JSON.stringify(projects || []) %>;
+            currentPage = 1;
+            loadProjects();
+            return;
+        }
+
+        fetch(`/project/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                projects = data; // timpa array projects
+                currentPage = 1; // reset ke halaman pertama
+                loadProjects();
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+            });
+    });
+                    </script>
+                    
+
+        </body>
+    </html>

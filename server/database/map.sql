@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 18 Mar 2025 pada 03.08
+-- Waktu pembuatan: 16 Apr 2025 pada 09.44
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -209,7 +209,18 @@ CREATE TABLE `materials` (
 
 INSERT INTO `materials` (`materials_id`, `name`, `price`, `unit`) VALUES
 (1, 'kabel', 5000, 'meter'),
-(2, 'tiang', 10000, 'pcs');
+(2, 'tiang', 40000, 'pcs');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `project`
+--
+
+CREATE TABLE `project` (
+  `project_id` int(11) NOT NULL,
+  `name` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -229,7 +240,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `name`, `email`, `password`) VALUES
-(1, 'admin', 'test@gmail.com', '123');
+(1, 'iwAN', 'test@gmail.com', 'Rezky123');
 
 --
 -- Indexes for dumped tables

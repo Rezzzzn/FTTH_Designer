@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Map</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <!-- Tambahkan ini di <head> atau sebelum </body> -->
+        <!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="/get-google-maps-api"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Simplified Sidebar Styles */
+       
+        #map {
+      height: 600px;
+      width: 100%;
+      border-radius: 10px;
+    }
+
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    #map {
+        height: 400px; /* Kurangi tinggi pada layar kecil */
+        width: 95%;
+    }
+}
+
+/* Responsif untuk layar sangat kecil (misalnya ponsel) */
+@media (max-width: 480px) {
+    #map {
+        height: 300px; /* Kurangi lagi tinggi untuk HP */
+        width: 100%;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark bg-dark p-3">
+        
+        <div class="ml-auto">
+             <a class="text-light mx-2" title="Menuju Halaman Home" href="/home"><i class="fas fa-home"></i></a>
+           <!-- <a class="text-light mx-2" href="#"><i class="fas fa-map"></i></a>
+            <a class="text-light mx-2" href="#"><i class="fas fa-file-alt"></i></a> -->
+            <a class="text-light mx-2"  title="Menuju Halaman User" href="/edit_profile"><i class="fas fa-user"></i></a>
+            <a class="text-light mx-2" title="Logout" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </header>
+
+    <aside class="main-sidebar">
+    <a class="navbar-brand" href="/home" style="margin-left:4rem; color: white; margin-top: 1rem;">Project Map</a>
+        <div class="sidebar-divider"></div>
+        
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="/uploads/<%= profilePicture %>" alt="User Profile Picture">
+                <span class="status-indicator"></span>
+            </div>
+            <div class="pull-left info">
+                <h5 class="hidden-xs"><%= name %></h5>
+
+
+                
+                <p class="user-role">Network Administrator</p>
+            </div>
+        </div>
+    
+        <div class="sidebar-divider"></div>
+    
+        <div class="sidebar-heading">Main Navigation</div>
+    
+        <ul class="sidebar-menu">
+            <li class="nav-item " style="margin-top: 10px;">
+                <a href="/home" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-tachometer-alt " style="margin-right: 10px;"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/project" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-project-diagram" style="margin-right: 10px;"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a href="/project" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-map-marked-alt" style="margin-right: 10px;"></i>
+                    <span>Maps</span>
+                </a>
+            </li>
+        </ul>
+    
+    
+    </aside>
+    
+    <section class="content-header" >
+        <div class="header-container">
+            <div class="header-title">
+                <div class="header-text">
+                    <span class="header-main">Maps Project</span>
+                    <span class="header-sub">Maps Panel</span>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-xs-12">
+            <div id="map"></div>
+          </div>
+        </div>
+      
+    </section>
+    
+    <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5 class="modal-title" id="projectModalLabel" >Masukkan Nama Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="projectForm">
+                        <div class="form-group">
+                            <label for="projectName">Nama Project</label>
+                            <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Masukkan nama project" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primaryy" id="saveProject">Lanjut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+ const projectId = <%= projectId %>;
+
+// Panggil otomatis saat halaman dibuka
+window.onload = () => {
+    viewProjectMap(projectId);
+};
+
+function viewProjectMap(projectId) {
+    fetch(`/project/${projectId}/map-data`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("Data dari server:", data);
+
+            const mapMarkers = [];
+            const segments = {};  // Variabel untuk menyimpan data titik berdasarkan segment_id
+
+            if (data.jalur && Array.isArray(data.jalur) && data.jalur.length > 0) {
+                // Pisahkan titik berdasarkan segment_id dan type
+                data.jalur.forEach(point => {
+                    const sid = point.segment_id;
+                    if (!segments[sid]) segments[sid] = { markers: [], polyline: [] };
+
+                    // Tambahkan titik untuk polyline
+                    if (point.type === 'polyline') {
+                        segments[sid].polyline.push({
+                            sequence: point.sequence,
+                            lat: parseFloat(point.lat),
+                            lng: parseFloat(point.lng),
+                            point_id: point.point_id
+                        });
+                    }
+
+                    // Tambahkan marker
+                    if (point.type === 'marker') {
+                        segments[sid].markers.push({
+                            lat: parseFloat(point.lat),
+                            lng: parseFloat(point.lng),
+                            point_id: point.point_id
+                        });
+                    }
+                });
+
+                // Gambar polyline untuk setiap segment
+                Object.keys(segments).forEach(segmentId => {
+                    const { polyline } = segments[segmentId];
+
+                    // Pastikan ada lebih dari 1 titik untuk membuat polyline
+                    if (polyline.length < 2) return;
+
+                    // Urutkan titik-titik berdasarkan urutan sequence
+                    polyline.sort((a, b) => a.sequence - b.sequence);
+
+                    const polylinePath = polyline.map(point => ({
+                        lat: point.lat,
+                        lng: point.lng
+                    }));
+
+                    // Cek apakah titik pertama dan terakhir sangat mirip (prevent loop)
+                    const first = polylinePath[0];
+                    const last = polylinePath[polylinePath.length - 1];
+                    const isSamePoint = 
+                        first.lat === last.lat && 
+                        first.lng === last.lng;
+
+                    // Jika titik pertama dan terakhir sangat mirip, potong titik terakhir
+                    const finalPath = isSamePoint ? polylinePath.slice(0, -1) : polylinePath;
+
+                    console.log(`Drawing Polyline for Segment ${segmentId}:`, finalPath);
+
+                    // Buat polyline dan tambahkan ke map
+                    const polylineObj = new google.maps.Polyline({
+                        path: finalPath,
+                        geodesic: true,
+                        strokeColor: "#FFA500",
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    });
+                    polylineObj.setMap(map);  // Tambahkan polyline ke peta
+                });
+
+                // Gambar marker untuk setiap segment
+                Object.keys(segments).forEach(segmentId => {
+                    const { markers } = segments[segmentId];
+                    markers.forEach(marker => {
+                        new google.maps.Marker({
+                            position: {
+                                lat: marker.lat,
+                                lng: marker.lng
+                            },
+                            map: map,
+                            title: `Segment ${segmentId}, Point ID ${marker.point_id}`
+                        });
+                    });
+                });
+            } else {
+                console.warn("Data jalur kosong atau tidak ditemukan.");
+            }
+        })
+        .catch(error => {
+            console.error("Terjadi error saat mengambil data:", error);
+        });
+}
+
+
+  </script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="/assets/js/map.js"></script>
+      <script src="/assets/js/modal.js"></script>
+      <script src="/assets/js/import.js"></script>
+  </body>
+  </html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Map</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <!-- Tambahkan ini di <head> atau sebelum </body> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="/get-google-maps-api"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Simplified Sidebar Styles */
+       
+        #map {
+      height: 600px;
+      width: 100%;
+      border-radius: 10px;
+    }
+
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    #map {
+        height: 400px; /* Kurangi tinggi pada layar kecil */
+        width: 95%;
+    }
+}
+
+/* Responsif untuk layar sangat kecil (misalnya ponsel) */
+@media (max-width: 480px) {
+    #map {
+        height: 300px; /* Kurangi lagi tinggi untuk HP */
+        width: 100%;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark bg-dark p-3">
+        
+        <div class="ml-auto">
+             <a class="text-light mx-2" title="Menuju Halaman Home" href="/home"><i class="fas fa-home"></i></a>
+           <!-- <a class="text-light mx-2" href="#"><i class="fas fa-map"></i></a>
+            <a class="text-light mx-2" href="#"><i class="fas fa-file-alt"></i></a> -->
+            <a class="text-light mx-2"  title="Menuju Halaman User" href="/edit_profile"><i class="fas fa-user"></i></a>
+            <a class="text-light mx-2" title="Logout" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+
+        </div>
+    </header>
+
+    <aside class="main-sidebar">
+    <a class="navbar-brand" href="?page=home" style="margin-left:4rem; color: white; margin-top: 1rem;">Project Map</a>
+        <div class="sidebar-divider"></div>
+        
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="/uploads/<%= profilePicture %>" alt="User Profile Picture">
+                <span class="status-indicator"></span>
+            </div>
+            <div class="pull-left info">
+                <h5 class="hidden-xs"><%= name %></h5>
+
+
+                
+                <p class="user-role">Network Administrator</p>
+            </div>
+        </div>
+    
+        <div class="sidebar-divider"></div>
+    
+        <div class="sidebar-heading">Main Navigation</div>
+    
+        <ul class="sidebar-menu">
+            <li class="nav-item active" style="margin-top: 10px;">
+                <a href="/home" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-tachometer-alt " style="margin-right: 10px;"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/project" class="nav-link d-flex align-items-center">
+                    <i class="fas fa-project-diagram" style="margin-right: 10px;"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+        </ul>
+    
+    
+    </aside>
+    
+    <section class="content-header" >
+        <div class="header-container">
+            <div class="header-title">
+                <div class="header-text">
+                    <span class="header-main">Dashboard</span>
+                    <span class="header-sub">Control Panel</span>
+                </div>
+                <div class="header-actions">
+                    <input type="file" id="kmlFile" name="kmlFile" accept=".kml" />
+                    <!-- <div class="file-input-container">
+                        <button class="btn btn-danger" onclick="handleImport()">
+                            <i class="fa fa-download"></i>
+                            Import
+                        </button>
+                    </div> -->
+                       
+                    <button id="saveImportlock" class="btn btn-danger">
+                        <i class="fa fa-save"></i> Save Import
+                    </button>
+
+                        <button id="saveProjectlock" class="btn btn-success">
+                            <i class="fa fa-save"></i> Save Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-xs-12">
+            <div id="map"></div>
+          </div>
+        </div>
+      
+    </section>
+    
+    <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5 class="modal-title" id="projectModalLabel" >Masukkan Nama Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="projectForm">
+                        <div class="form-group">
+                            <label for="projectName">Nama Project</label>
+                            <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Masukkan nama project" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primaryy" id="saveProject">Lanjut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+
+
+    <!-- <table border="1" style="margin-left: 250px; margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="boqTable">
+            <tr><td>Tiang</td><td id="tiangCount">0</td></tr>
+            <tr><td>Kabel</td><td id="kabelLength">0 m</td></tr>
+        </tbody>
+    </table> -->
+<!--    
+    <script>
+function clearMap() {
+    // Menghapus semua marker dan polyline yang ada di peta
+    markers.forEach(marker => marker.setMap(null));
+    polylines.forEach(polyline => polyline.setMap(null));
+    markers = [];
+    polylines = [];
+}
+
+function handleImport() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'File belum dipilih',
+            text: 'Silakan pilih file KML terlebih dahulu.'
+        });
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const kmlText = e.target.result;
+        parseKML(kmlText); // Parse KML untuk menambahkan marker dan polyline
+    };
+    reader.readAsText(file);
+}
+function parseKML(kmlText) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(kmlText, "application/xml");
+    const placemarks = xmlDoc.getElementsByTagName("Placemark");
+
+    let markerCount = 0;
+    let polylineCount = 0;
+
+    // Reset data global
+    projectSegments = [];
+    totalTiang = 0;
+    totalKabel = 0;
+
+    for (let i = 0; i < placemarks.length; i++) {
+        const placemark = placemarks[i];
+        const name = placemark.getElementsByTagName("name")[0]?.textContent || `Segment ${i + 1}`;
+
+        // Tangani marker (Point)
+        const point = placemark.getElementsByTagName("Point")[0];
+        if (point) {
+            const coordinates = point.getElementsByTagName("coordinates")[0].textContent.trim();
+            const [lng, lat] = coordinates.split(",").map(Number);
+            const position = new google.maps.LatLng(lat, lng);
+
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: name
+            });
+            markers.push(marker);
+            markerCount++;
+        }
+
+        // Tangani polyline (LineString)
+        const lineString = placemark.getElementsByTagName("LineString")[0];
+        if (lineString) {
+            const coordinatesText = lineString.getElementsByTagName("coordinates")[0].textContent.trim();
+            const rawCoords = coordinatesText.split(/\s+/).map(coord => {
+                const [lng, lat] = coord.split(",").map(Number);
+                return new google.maps.LatLng(lat, lng);
+            });
+
+            const coordsArray = simplifyPath(rawCoords, 1); // minimum 1 meter antar titik
+
+            const polyline = new google.maps.Polyline({
+                path: coordsArray,
+                geodesic: true,
+                strokeColor: "#FFA500",
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                map: map
+            });
+            polylines.push(polyline);
+            polylineCount++;
+
+        const panjang = Math.round(calculateLength(coordsArray));
+const tiang = coordsArray.length;
+
+projectSegments.push({
+    name: name,
+    polyline: coordsArray,
+    length: panjang,
+    tiang: tiang,
+    kabel: panjang
+});
+
+
+totalTiang += tiang;
+totalKabel += panjang;
+
+            // Debug info
+            console.log(`Segment ${name}: Titik = ${coordsArray.length}, Tiang = ${tiang}, Panjang = ${panjang.toFixed(2)} meter`);
+        }
+    }
+
+    if (markers.length > 0) {
+        const bounds = new google.maps.LatLngBounds();
+        markers.forEach(marker => bounds.extend(marker.getPosition()));
+        polylines.forEach(poly => poly.getPath().forEach(latlng => bounds.extend(latlng)));
+        map.fitBounds(bounds);
+    }
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Import Berhasil',
+        text: `Berhasil memuat ${markerCount} marker dan ${polylineCount} jalur.`,
+        confirmButtonText: 'Oke'
+    });
+}
+
+// Fungsi untuk menghitung total panjang kabel (meter)
+function calculateLength(path) {
+    let length = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+        length += google.maps.geometry.spherical.computeDistanceBetween(path[i], path[i + 1]);
+    }
+    return length;
+}
+
+// Opsional: menyederhanakan titik-titik yang terlalu rapat
+function simplifyPath(path, minDistance = 1) {
+    if (path.length <= 1) return path;
+    let simplified = [path[0]];
+
+    for (let i = 1; i < path.length; i++) {
+        const last = simplified[simplified.length - 1];
+        const current = path[i];
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(last, current);
+
+        if (distance >= minDistance) {
+            simplified.push(current);
+        }
+    }
+    return simplified;
+}
+
+
+
+    </script> -->
+    <script>
+function clearMap() {
+    markers.forEach(marker => marker.setMap(null));
+    polylines.forEach(polyline => polyline.setMap(null));
+    markers = [];
+    polylines = [];
+}
+document.getElementById("kmlFile").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const kmlText = e.target.result;
+        importKML(kmlText); // Panggil fungsi tadi
+    };
+    reader.readAsText(file);
+});
+
+
+function parseKML(kmlString) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(kmlString, "text/xml");
+
+    const placemarks = xmlDoc.getElementsByTagName("Placemark");
+    const polylines = [];
+    const pointMarkers = [];
+
+    for (let placemark of placemarks) {
+        const lineString = placemark.getElementsByTagName("LineString")[0];
+        const point = placemark.getElementsByTagName("Point")[0];
+
+        if (lineString) {
+            const coordsText = lineString.getElementsByTagName("coordinates")[0].textContent.trim();
+            const coordPairs = coordsText.split(/\s+/).map(coord => {
+                const [lng, lat] = coord.split(",").map(Number);
+                return [lat, lng];
+            });
+
+            const path = coordPairs.map(([lat, lng]) => new google.maps.LatLng(lat, lng));
+            const kabel = google.maps.geometry.spherical.computeLength(path);
+
+            polylines.push({
+                polyline: coordPairs,
+                markers: [],
+                tiang: 0,
+                kabel: Math.round(kabel)
+            });
+        } else if (point) {
+            const coordsText = point.getElementsByTagName("coordinates")[0].textContent.trim();
+            const [lng, lat] = coordsText.split(",").map(Number);
+            pointMarkers.push([lat, lng]);
+        }
+    }
+
+    // Pasangkan markers ke polyline terdekat
+    for (const [lat, lng] of pointMarkers) {
+        const markerLatLng = new google.maps.LatLng(lat, lng);
+        let closestIndex = -1;
+        let minDistance = Infinity;
+
+        for (let i = 0; i < polylines.length; i++) {
+            const path = polylines[i].polyline.map(([lt, ln]) => new google.maps.LatLng(lt, ln));
+            for (let j = 0; j < path.length - 1; j++) {
+                const segDist = google.maps.geometry.spherical.computeDistanceBetween(markerLatLng, path[j]);
+                if (segDist < minDistance) {
+                    minDistance = segDist;
+                    closestIndex = i;
+                }
+            }
+        }
+
+        if (closestIndex !== -1) {
+            polylines[closestIndex].markers.push([lat, lng]);
+        }
+    }
+
+    polylines.forEach(p => {
+        p.tiang = p.markers.length;
+    });
+
+    return polylines;
+}
+
+function calculateLength(path) {
+    let length = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+        length += google.maps.geometry.spherical.computeDistanceBetween(path[i], path[i + 1]);
+    }
+    return length;
+}
+
+function simplifyPath(path, minDistance = 1) {
+    if (path.length <= 1) return path;
+    let simplified = [path[0]];
+
+    for (let i = 1; i < path.length; i++) {
+        const last = simplified[simplified.length - 1];
+        const current = path[i];
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(last, current);
+
+        if (distance >= minDistance) {
+            simplified.push(current);
+        }
+    }
+    return simplified;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const saveButton = document.getElementById("saveImportlock");
+
+    if (saveButton) {
+        saveButton.addEventListener("click", () => {
+            const projectName = prompt("Masukkan nama project:");
+
+            if (!projectName || !projectName.trim()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Nama Project Kosong',
+                    text: 'Silakan isi nama project terlebih dahulu.'
+                });
+                return;
+            }
+
+            if (!projectSegments || projectSegments.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data belum tersedia',
+                    text: 'Silakan import file KML terlebih dahulu.'
+                });
+                return;
+            }
+
+            const fixedSegments = projectSegments.map(s => ({
+                name: s.name || '',
+                tiang: s.tiang || 0,
+                kabel: s.kabel || 0,
+                markers: s.markers || [],
+                polyline: s.polyline || []
+            }));
+
+            const totalTiang = fixedSegments.reduce((sum, s) => sum + (s.tiang || 0), 0);
+            const totalKabel = fixedSegments.reduce((sum, s) => sum + (s.kabel || 0), 0);
+
+            const data = {
+                projectName,
+                totalTiang,
+                totalKabel,
+                segments: fixedSegments
+            };
+
+            localStorage.setItem("boqData", JSON.stringify(data));
+            localStorage.setItem("latestProjectName", projectName);
+
+            fetch("/api/save-project", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Project berhasil disimpan!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = "/boq";
+                });
+            })
+            .catch(error => {
+                console.error("Gagal menyimpan:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan saat menyimpan data.'
+                });
+            });
+        });
+    }
+});        </script>
+        
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/map.js"></script>
+    <script src="/assets/js/modal.js"></script>
+    <!-- <script src="/assets/js/import.js"></script> -->
+</body>
+</html>
