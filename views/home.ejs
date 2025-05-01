@@ -437,20 +437,11 @@ function simplifyPath(path, minDistance = 1) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const saveButton = document.getElementById("saveImportlock");
+    const saveProjectBtn = document.getElementById("saveProject");
+    const projectNameInput = document.getElementById("projectName");
 
     if (saveButton) {
         saveButton.addEventListener("click", () => {
-            const projectName = prompt("Masukkan nama project:");
-
-            if (!projectName || !projectName.trim()) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Nama Project Kosong',
-                    text: 'Silakan isi nama project terlebih dahulu.'
-                });
-                return;
-            }
-
             if (!projectSegments || projectSegments.length === 0) {
                 Swal.fire({
                     icon: 'warning',
@@ -460,6 +451,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Tampilkan modal
+            $('#projectModal').modal('show');
+        });
+    }
+
+    if (saveProjectBtn) {
+        saveProjectBtn.addEventListener("click", () => {
+            const projectName = projectNameInput.value.trim();
+
+            if (!projectName) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Nama Project Kosong',
+                    text: 'Silakan isi nama project terlebih dahulu.'
+                });
+                return;
+            }
+
+            // Tutup modal
+            $('#projectModal').modal('hide');
+
+            // Format dan siapkan data project
             const fixedSegments = projectSegments.map(s => ({
                 name: s.name || '',
                 tiang: s.tiang || 0,
@@ -478,9 +491,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 segments: fixedSegments
             };
 
+            // Simpan ke localStorage
             localStorage.setItem("boqData", JSON.stringify(data));
             localStorage.setItem("latestProjectName", projectName);
 
+            // Kirim ke server
             fetch("/api/save-project", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -507,7 +522,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-});        </script>
+});
+        </script>
         
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
